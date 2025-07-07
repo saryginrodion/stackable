@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"bluered/tonix-backend/stackable"
+	"github.com/radyshenkya/stackable"
 	"sync/atomic"
 )
 
