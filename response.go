@@ -21,6 +21,16 @@ type HttpResponse struct {
 	headers     HeadersContainer
 }
 
+func NewHttpResponseRaw(headers HeadersContainer, status int, body string) *HttpResponse {
+	resp := HttpResponse{
+		headers:     headers,
+		status:      status,
+		bodyContent: body,
+	}
+
+	return &resp
+}
+
 func NewHttpResponse(status int, contentType string, body string) *HttpResponse {
 	headers := NewHeadersContainer()
 	headers.Set("Content-Type", contentType)
