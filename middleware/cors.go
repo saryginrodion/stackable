@@ -18,7 +18,7 @@ type CORSMiddleware[S stackable.ISharedState, L stackable.ILocalState] struct {
     AllowCredentials bool
 }
 
-func (s *CORSMiddleware[S, L]) Run(context stackable.Context[S, L], next func() error) error {
+func (s *CORSMiddleware[S, L]) Run(context *stackable.Context[S, L], next func() error) error {
     err := next()
 
     origin := context.Request.Header.Get("origin")
