@@ -3,6 +3,7 @@ package stackable
 import (
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -27,6 +28,22 @@ type Handler[S ISharedState, L ILocalState] interface {
 type Stackable[S ISharedState, L ILocalState] struct {
 	Handlers []Handler[S, L]
 	Shared   *S
+	logger *logrus.Logger
+}
+
+func NewStackable[S ISharedState, L ILocalState](s *S) Stackable[S, L] {
+	logger := logrus.New()
+
+	stack := Stackable[S, L]{
+		Shared: s,
+		logger: logger,
+	}
+
+	return stack
+}
+
+func (s *Stackable[S, L]) SetLogLevel(level logrus.Level) {
+	s.logger.SetLevel(level)
 }
 
 func (s *Stackable[S, L]) AddHandler(handler Handler[S, L]) *Stackable[S, L] {
@@ -78,7 +95,7 @@ func (s *Stackable[S, L]) HttpHandler() http.HandlerFunc {
 		err := next()
 
 		if err != nil {
-			logrus.WithField("err", err).Error("Stackable: finished with error. Error: " + err.Error())
+			s.logger.WithField("err", err).Error("Stackable: finished with error. Error: " + err.Error())
 		}
 
 		// Writing response to http.ResponseWriter
@@ -97,11 +114,19 @@ func (s *Stackable[S, L]) HttpHandler() http.HandlerFunc {
 		_, err = io.Copy(response, context.Response.Body())
 
 		if err != nil {
-			logrus.WithField("err", err).Error("Stackable: failed to write response. Error: " + err.Error())
+			s.logger.WithField("err", err).Error("Stackable: failed to write response. Error: " + err.Error())
 		}
 	}
 }
 
 func (s Stackable[S, L]) ServeHTTP(response http.ResponseWriter, request *http.Request) {
+	startTime := time.Now()
 	s.HttpHandler()(response, request)
+	stopTime := time.Now()
+	elapsedTime := stopTime.Sub(startTime)
+
+	s.logger.WithFields(logrus.Fields{
+		"origin": "stackable",
+		"url": request.URL.Path,
+	}).Debugf("Handled in %dms", elapsedTime.Milliseconds())
 }
