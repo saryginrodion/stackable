@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/radyshenkya/stackable/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -54,6 +55,7 @@ func (s *Stackable[S, L]) AddHandler(handler Handler[S, L]) *Stackable[S, L] {
 func (s Stackable[S, L]) AddUniqueHandler(handler Handler[S, L]) Stackable[S, L] {
 	newStackable := Stackable[S, L]{
 		Shared: s.Shared,
+		logger: s.logger,
 	}
 
 	newStackable.Handlers = make([]Handler[S, L], len(s.Handlers))
@@ -128,5 +130,5 @@ func (s Stackable[S, L]) ServeHTTP(response http.ResponseWriter, request *http.R
 	s.logger.WithFields(logrus.Fields{
 		"origin": "stackable",
 		"url": request.URL.Path,
-	}).Debugf("Handled in %dms", elapsedTime.Milliseconds())
+	}).Debugf("Handled in %s", utils.FormatDuration(elapsedTime))
 }
