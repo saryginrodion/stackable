@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/radyshenkya/stackable"
+	"github.com/saryginrodion/stackable"
 	"github.com/sirupsen/logrus"
 )
 

@@ -1,4 +1,4 @@
-module github.com/radyshenkya/stackable
+module github.com/saryginrodion/stackable
 
 go 1.24.3
 

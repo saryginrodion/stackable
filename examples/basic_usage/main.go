@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"sync/atomic"
 
-	"github.com/radyshenkya/stackable"
+	"github.com/saryginrodion/stackable"
 	"github.com/sirupsen/logrus"
 )
 

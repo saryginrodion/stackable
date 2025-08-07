@@ -7,7 +7,7 @@ Example with different middlewares and handlers:
 package main
  
  import (
-	"github.com/radyshenkya/stackable"
+	"github.com/saryginrodion/stackable"
 	"errors"
 	"net/http"
 	"sync/atomic"

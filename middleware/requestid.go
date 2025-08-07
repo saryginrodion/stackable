@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/radyshenkya/stackable"
+	"github.com/saryginrodion/stackable"
 	"sync/atomic"
 )
 
