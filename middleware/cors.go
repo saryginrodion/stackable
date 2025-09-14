@@ -1,13 +1,11 @@
 package middleware
 
 import (
-	"io"
 	"net/http"
 	"slices"
 	"strings"
 
 	"github.com/saryginrodion/stackable"
-	"github.com/sirupsen/logrus"
 )
 
 
@@ -46,24 +44,18 @@ func (s *CORSMiddleware[S, L]) Run(context *stackable.Context[S, L], next func()
         context.Response = stackable.NewHttpResponseRaw(
             headers,
             http.StatusOK,
-            "",
+            strings.NewReader(""),
         )
 
         return err
     }
 
-    bodyBuf := new(strings.Builder)
-    _, copyErr := io.Copy(bodyBuf, context.Response.Body())
-
-    if copyErr != nil {
-        logrus.Errorln("cors.go: error on copying to bodyBuf: " + copyErr.Error())
-    }
-
+    bodyStream := context.Response.Body()
 
     context.Response = stackable.NewHttpResponseRaw(
         headers,
         context.Response.Status(),
-        bodyBuf.String(),
+        bodyStream,
     )
 
     return err

@@ -16,16 +16,16 @@ type Response interface {
 }
 
 type HttpResponse struct {
-	bodyContent string
-	status      int
-	headers     HeadersContainer
+	body    io.Reader
+	status  int
+	headers HeadersContainer
 }
 
-func NewHttpResponseRaw(headers HeadersContainer, status int, body string) *HttpResponse {
+func NewHttpResponseRaw(headers HeadersContainer, status int, body io.Reader) *HttpResponse {
 	resp := HttpResponse{
-		headers:     headers,
-		status:      status,
-		bodyContent: body,
+		headers: headers,
+		status:  status,
+		body:    body,
 	}
 
 	return &resp
@@ -35,16 +35,16 @@ func NewHttpResponse(status int, contentType string, body string) *HttpResponse 
 	headers := NewHeadersContainer()
 	headers.Set("Content-Type", contentType)
 	resp := HttpResponse{
-		headers:     headers,
-		status:      status,
-		bodyContent: body,
+		headers: headers,
+		status:  status,
+		body:    strings.NewReader(body),
 	}
 
 	return &resp
 }
 
 func (r *HttpResponse) SetHeaders(newHeaders HeadersContainer) {
-    r.headers = newHeaders
+	r.headers = newHeaders
 }
 
 func (r *HttpResponse) Headers() HeadersContainer {
@@ -52,7 +52,7 @@ func (r *HttpResponse) Headers() HeadersContainer {
 }
 
 func (r *HttpResponse) Body() io.Reader {
-	return strings.NewReader(r.bodyContent)
+	return r.body
 }
 
 func (r *HttpResponse) Status() int {

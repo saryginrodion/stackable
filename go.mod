@@ -1,6 +1,7 @@
 module github.com/saryginrodion/stackable
 
 go 1.24.3
+
 retract [v0.0.1, v0.0.8]
 
 require github.com/sirupsen/logrus v1.9.3
